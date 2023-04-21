@@ -1,5 +1,7 @@
 # Padding
 
+import urllib
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -31,11 +33,11 @@ class Grid:
         dy = self.padding_y / 2
         x = round(dx + (col * x_block))
         y = round(dy + (row * y_block))
-        if last_col == self.columns:  # lastdx column
+        if last_col == self.columns:
             b_x = round(num_col * x_block - self.padding_x)
         else:
             b_x = round(num_col * x_block - (dx))
-        if last_row == self.rows:  #  last row
+        if last_row == self.rows:
             b_y = round(num_row * y_block - self.padding_y)
         else:
             b_y = round(num_row * y_block - (dy))
@@ -44,34 +46,47 @@ class Grid:
     def make_presets(self):
         for row in range(self.rows):
             for col in range(self.columns):
-                for row_ndx in range(self.rows-row):
-                    for col_ndx in range(self.columns-col):
+                for row_ndx in range(self.rows - row):
+                    for col_ndx in range(self.columns - col):
                         num_col = col_ndx + 1
                         num_row = row_ndx + 1
                         x, y, w, h = self.calc_block(row, col, num_row, num_col)
-                        name =     f"Grid%28{self.columns}x{self.rows}%29-%28{row}%2C{col}%29%28{num_row}x{num_col}%29"
-                        preset = "---\n"                    
+                        name = f"Grid({self.columns}x{self.rows})-({row},{col})({num_row}x{num_col})"
+                        qf_name = urllib.parse.quote_plus(name)
+                        preset = "---\n"
                         preset += f"rect: {x} {y} {w} {h} 1\n"
                         preset += "radius: 0\n"
                         preset += "color: #00000000\n"
                         preset += "..."
-                        path = Path("./presets/cropRectangle") / Path(name)
-                        print(path.as_posix())
-                        with open(path.as_posix(),"w") as out_file:
-                            out_file.write(preset)
-                    
-        
+                        path = Path("./presets/cropRectangle") / Path(qf_name)
+                        if not path.exists():
+                            print(f"create preset {name} : {path.resolve().name}")
+                            with open(path.resolve(), "w") as out_file:
+                                out_file.write(preset)
+                        else:
+                            print(f" --> {name} : {path.resolve().name} already exist")
+
 
 def main():
-    width, height = 1920, 1080
-    colums, rows = 3, 2
+    parser = argparse.ArgumentParser(
+        prog="create_grid_preset",
+        description="Create preset for crop: rectangle filter in Shotcut",
+    )
+    parser.add_argument("width", type=int)
+    parser.add_argument("height", type=int)
+    parser.add_argument("columns", type=int)
+    parser.add_argument("rows", type=int)
+    parser.add_argument("--xpad", type=int, default=9)
+    parser.add_argument("--ypad", type=int, default=16)
+
+    args = parser.parse_args()
+
+    width, height = args.width, args.height
+    colums, rows = args.columns, args.rows
     grid = Grid(width, height, colums, rows)
-    grid.set_padding(9, 16)
+    grid.set_padding(args.xpad, args.ypad)
     grid.make_presets()
-    colums, rows = 3, 3
-    grid = Grid(width, height, colums, rows)
-    grid.set_padding(9, 16)
-    grid.make_presets()
-    
+
+
 if __name__ == "__main__":
     main()
