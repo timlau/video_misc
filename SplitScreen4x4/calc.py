@@ -1,4 +1,4 @@
-# border thickness 
+# border thickness
 border = 1.5
 
 # Video Size
