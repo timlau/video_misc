@@ -41,46 +41,37 @@ class Grid:
             b_y = round(num_row * y_block - (dy))
         return x, y, b_x, b_y
 
+    def make_presets(self):
+        for row in range(self.rows):
+            for col in range(self.columns):
+                for row_ndx in range(self.rows-row):
+                    for col_ndx in range(self.columns-col):
+                        num_col = col_ndx + 1
+                        num_row = row_ndx + 1
+                        x, y, w, h = self.calc_block(row, col, num_row, num_col)
+                        name =     f"Grid%28{self.columns}x{self.rows}%29-%28{row}%2C{col}%29%28{num_row}x{num_col}%29"
+                        preset = "---\n"                    
+                        preset += f"rect: {x} {y} {w} {h} 1\n"
+                        preset += "radius: 0\n"
+                        preset += "color: #00000000\n"
+                        preset += "..."
+                        path = Path("./presets/cropRectangle") / Path(name)
+                        print(path.as_posix())
+                        with open(path.as_posix(),"w") as out_file:
+                            out_file.write(preset)
+                    
+        
 
 def main():
     width, height = 1920, 1080
     colums, rows = 3, 2
     grid = Grid(width, height, colums, rows)
     grid.set_padding(9, 16)
-    clips = [
-        # row 0
-        (0, 0, 1, 1),
-        (0, 0, 1, 2),
-        (0, 0, 1, 3),
-        (0, 1, 1, 1),
-        (0, 1, 1, 2),
-        (0, 2, 1, 1),
-        # row 1
-        (1, 0, 1, 1),
-        (1, 0, 1, 2),
-        (1, 0, 1, 3),
-        (1, 1, 1, 1),
-        (1, 1, 1, 2),
-        (1, 2, 1, 1),
-    ]
-
-    for row in range(rows):
-        for col in range(colums):
-            for row_ndx in range(rows-row):
-                for col_ndx in range(colums-col):
-                    num_col = col_ndx + 1
-                    num_row = row_ndx + 1
-                    x, y, w, h = grid.calc_block(row, col, num_row, num_col)
-                    name =     f"Grid%28{colums}x{rows}%29-%28{row}%2C{col}%29%28{num_row}x{num_col}%29"
-                    preset = "---\n"                    
-                    preset += f"rect: {x} {y} {w} {h} 1\n"
-                    preset += "radius: 0\n"
-                    preset += "color: #00000000\n"
-                    preset += "..."
-                    path = Path("./presets/cropRectangle") / Path(name)
-                    with open(path.as_posix(),"w") as out_file:
-                        out_file.write(preset)
-                    
-
+    grid.make_presets()
+    colums, rows = 3, 3
+    grid = Grid(width, height, colums, rows)
+    grid.set_padding(9, 16)
+    grid.make_presets()
+    
 if __name__ == "__main__":
     main()
