@@ -5,6 +5,8 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
+from regex import FULLCASE
+
 
 @dataclass
 class Grid:
@@ -12,8 +14,10 @@ class Grid:
     height: int
     columns: int
     rows: int
-    padding_x = 0
-    padding_y = 0
+    update: bool
+    output: str
+    xpad: int
+    ypad: int
 
     @property
     def block_size(self):
@@ -22,52 +26,55 @@ class Grid:
         return block_width, block_height
 
     def set_padding(self, x, y):
-        self.padding_x = x
-        self.padding_y = y
+        self.xpad = x
+        self.ypad = y
 
     def calc_block(self, row, col, num_row, num_col):
         x_block, y_block = self.block_size
         last_col = col + num_col
         last_row = row + num_row
-        dx = self.padding_x / 2
-        dy = self.padding_y / 2
+        dx = self.xpad / 2
+        dy = self.ypad / 2
         x = round(dx + (col * x_block))
         y = round(dy + (row * y_block))
         if last_col == self.columns:
-            b_x = round(num_col * x_block - self.padding_x)
+            b_x = round(num_col * x_block - self.xpad)
         else:
             b_x = round(num_col * x_block - (dx))
         if last_row == self.rows:
-            b_y = round(num_row * y_block - self.padding_y)
+            b_y = round(num_row * y_block - self.ypad)
         else:
             b_y = round(num_row * y_block - (dy))
         return x, y, b_x, b_y
 
-    def make_presets(self, output=".", update=False):
+    def make_presets(self):
         for row in range(self.rows):
             for col in range(self.columns):
                 for row_ndx in range(self.rows - row):
                     for col_ndx in range(self.columns - col):
                         num_col = col_ndx + 1
                         num_row = row_ndx + 1
-                        x, y, w, h = self.calc_block(row, col, num_row, num_col)
-                        name = f"Grid({self.columns}x{self.rows})_({row},{col})_({num_row}x{num_col})"
-                        qf_name = urllib.parse.quote_plus(name)
-                        preset = "---\n"
-                        preset += f"rect: {x} {y} {w} {h} 1\n"
-                        preset += "radius: 0\n"
-                        preset += 'color: "#00000000"\n'
-                        preset += "..."
-                        directory = Path(output) / Path("presets/cropRectangle")
-                        if not directory.exists():
-                            directory.mkdir(parents=True, exist_ok=True)
-                        path = directory / Path(qf_name)
-                        if not path.exists() or update:
-                            print(f"create preset {name} : {path.resolve().name}")
-                            with open(path.resolve(), "w") as out_file:
-                                out_file.write(preset)
-                        else:
-                            print(f" --> {name} : {path.resolve().name} already exist")
+                        self.write_crop_preset(row, col, num_col, num_row)
+
+    def write_crop_preset(self, row, col, num_col, num_row):
+        x, y, w, h = self.calc_block(row, col, num_row, num_col)
+        name = f"Grid({self.columns}x{self.rows}:{self.height})_({row},{col}:{num_row}x{num_col})"
+        qf_name = urllib.parse.quote_plus(name)
+        preset = "---\n"
+        preset += f"rect: {x} {y} {w} {h} 1\n"
+        preset += "radius: 0\n"
+        preset += 'color: "#00000000"\n'
+        preset += "..."
+        directory = Path(self.output) / Path("presets/cropRectangle")
+        if not directory.exists():
+            directory.mkdir(parents=True, exist_ok=True)
+        path = directory / Path(qf_name)
+        if not path.exists() or self.update:
+            print(f"create preset {name} : {path.resolve().name}")
+            with open(path.resolve(), "w") as out_file:
+                out_file.write(preset)
+        else:
+            print(f" --> {name} : {path.resolve().name} already exist")
 
 
 def main():
@@ -85,12 +92,10 @@ def main():
     parser.add_argument("-o", "--output", type=str, default=".")
 
     args = parser.parse_args()
-
-    width, height = args.width, args.height
-    colums, rows = args.columns, args.rows
-    grid = Grid(width, height, colums, rows)
-    grid.set_padding(args.xpad, args.ypad)
-    grid.make_presets(output=args.output, update=args.update)
+    kwargs = vars(args)
+    print(kwargs)
+    grid = Grid(**kwargs)
+    grid.make_presets()
 
 
 if __name__ == "__main__":
