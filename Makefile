@@ -1,3 +1,4 @@
+VERSION = 0.1
 SHOTCUT_DATA=/home/tim/Documents/Shotcut
 
 update-presets:
@@ -9,3 +10,10 @@ update-presets:
 update-shocut:
 	@rm -f $(SHOTCUT_DATA)/presets/cropRectangle/Grid*
 	python ./create_grid_presets/create_grid_presets.py 3 3 -o $(SHOTCUT_DATA)
+
+
+release:
+	@git tag -f -m "Added ${VERSION} release tag" ${VERSION}
+	@git push --tags origin
+	@rm -f *.zip
+	zip -r shotcut_presets.zip Shotcut/
