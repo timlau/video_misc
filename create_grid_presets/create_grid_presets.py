@@ -79,17 +79,17 @@ class Grid:
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="create_grid_preset",
+        prog="pyhton create_grid_presets.py",
         description="Create preset for crop: rectangle filter in Shotcut",
     )
-    parser.add_argument("--width", type=int, default=1920)
-    parser.add_argument("--height", type=int, default=1080)
-    parser.add_argument("columns", type=int)
-    parser.add_argument("rows", type=int)
-    parser.add_argument("--xpad", type=int, default=15)
-    parser.add_argument("--ypad", type=int, default=15)
-    parser.add_argument("--update", default=False, action="store_true")
-    parser.add_argument("-o", "--output", type=str, default=".")
+    parser.add_argument("--width", type=int, default=1920, help="Frame Width (Default: 1940)")
+    parser.add_argument("--height", type=int, default=1080, help="Frame Height (Default: 1080)")
+    parser.add_argument("columns", type=int, help="Number of grid colums")
+    parser.add_argument("rows", type=int, help="Number of grid rows")
+    parser.add_argument("--xpad", type=int, default=15, help="padding between columns (default: 15px)")
+    parser.add_argument("--ypad", type=int, default=15,help="padding between rows")
+    parser.add_argument("--update", default=False, action="store_true",help="Update existing presets")
+    parser.add_argument("-o", "--output", type=str, default=".", help="output directory (default: current dir)")
 
     args = parser.parse_args()
     kwargs = vars(args)
