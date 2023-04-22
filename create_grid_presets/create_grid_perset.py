@@ -43,7 +43,7 @@ class Grid:
             b_y = round(num_row * y_block - (dy))
         return x, y, b_x, b_y
 
-    def make_presets(self):
+    def make_presets(self, update=False):
         for row in range(self.rows):
             for col in range(self.columns):
                 for row_ndx in range(self.rows - row):
@@ -59,7 +59,7 @@ class Grid:
                         preset += "color: #00000000\n"
                         preset += "..."
                         path = Path("./presets/cropRectangle") / Path(qf_name)
-                        if not path.exists():
+                        if not path.exists() or update:
                             print(f"create preset {name} : {path.resolve().name}")
                             with open(path.resolve(), "w") as out_file:
                                 out_file.write(preset)
@@ -76,8 +76,9 @@ def main():
     parser.add_argument("height", type=int)
     parser.add_argument("columns", type=int)
     parser.add_argument("rows", type=int)
-    parser.add_argument("--xpad", type=int, default=9)
-    parser.add_argument("--ypad", type=int, default=16)
+    parser.add_argument("--xpad", type=int, default=15)
+    parser.add_argument("--ypad", type=int, default=15)
+    parser.add_argument("--update", default=False, action="store_true")
 
     args = parser.parse_args()
 
@@ -85,7 +86,7 @@ def main():
     colums, rows = args.columns, args.rows
     grid = Grid(width, height, colums, rows)
     grid.set_padding(args.xpad, args.ypad)
-    grid.make_presets()
+    grid.make_presets(args.update)
 
 
 if __name__ == "__main__":
