@@ -58,7 +58,7 @@ class Grid:
 
     def write_crop_preset(self, row, col, num_col, num_row):
         x, y, w, h = self.calc_block(row, col, num_row, num_col)
-        name = f"Grid({self.columns}x{self.rows}:{self.height})_({row},{col}:{num_row}x{num_col})"
+        name = f"Grid_{self.columns}x{self.rows}_{self.height}_({row+1},{col+1}.{num_row}x{num_col})"
         qf_name = urllib.parse.quote_plus(name)
         preset = "---\n"
         preset += f"rect: {x} {y} {w} {h} 1\n"
