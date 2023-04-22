@@ -58,9 +58,10 @@ class Grid:
                         preset += "radius: 0\n"
                         preset += 'color: "#00000000"\n'
                         preset += "..."
-                        path = (
-                            Path(output) / Path("presets/cropRectangle") / Path(qf_name)
-                        )
+                        directory = Path(output) / Path("presets/cropRectangle")
+                        if not directory.exists():
+                            directory.mkdir(parents=True, exist_ok=True)
+                        path = directory / Path(qf_name)
                         if not path.exists() or update:
                             print(f"create preset {name} : {path.resolve().name}")
                             with open(path.resolve(), "w") as out_file:
