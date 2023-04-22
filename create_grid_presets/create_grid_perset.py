@@ -51,12 +51,12 @@ class Grid:
                         num_col = col_ndx + 1
                         num_row = row_ndx + 1
                         x, y, w, h = self.calc_block(row, col, num_row, num_col)
-                        name = f"Grid({self.columns}x{self.rows})-({row},{col})({num_row}x{num_col})"
+                        name = f"Grid({self.columns}x{self.rows})_({row},{col})_({num_row}x{num_col})"
                         qf_name = urllib.parse.quote_plus(name)
                         preset = "---\n"
                         preset += f"rect: {x} {y} {w} {h} 1\n"
                         preset += "radius: 0\n"
-                        preset += "color: #00000000\n"
+                        preset += 'color: "#00000000"\n'
                         preset += "..."
                         path = (
                             Path(output) / Path("presets/cropRectangle") / Path(qf_name)
