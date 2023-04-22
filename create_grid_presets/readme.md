@@ -2,6 +2,9 @@ Tool to create presets for the **Crop: Rectangle** filter in the [Shotcut](http:
 
 Presets need to be copied to the Shotcut App Data Directory (Settings -> App Data Directory -> Show)
 
+![](data/../../data/ex1.png)
+
+
 ## Requirements
 
 Python 3.11 on Linux, Windows or Mac
@@ -41,4 +44,4 @@ python create_grid_presets.py --height 2160 --width 3840 3 2 -o <Path to Shotcut
 ```
 Create presets for a 3x2 Grip (UHD: 3840x2160) in the Shotcut App Data directory
 
-
+![](data/../../data/Testing%20Grid.gif)
