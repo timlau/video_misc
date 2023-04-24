@@ -11,12 +11,15 @@ update-shocut:
 	@rm -f $(SHOTCUT_DATA)/presets/cropRectangle/Grid*
 	python ./create_grid_presets/create_grid_presets.py 3 3 -o $(SHOTCUT_DATA)
 
+zip-release:
+	@rm -f shotcut_presets*.zip
+	zip -r shotcut_presets_grid_2x2.zip ./Shotcut/Grid_2x2
+	zip -r shotcut_presets_grid_2x3.zip ./Shotcut/Grid_2x3
+	zip -r shotcut_presets_grid_3x3.zip ./Shotcut/Grid_3x3
 
 release:
 	@git commit -a -m "release ${VERSION}"
 	@git tag -f -m "Added ${VERSION} release tag" release-${VERSION}
+	@git push
 	@git push --tags origin
-	@rm -f *.zip
-	zip -r shotcut_presets_grid_2x2.zip /Shotcut/Grid_2x2
-	zip -r shotcut_presets_grid_2x3.zip /Shotcut/Grid_2x3
-	zip -r shotcut_presets_grid_3x3.zip /Shotcut/Grid_3x3
+	@$(MAKE) zip-release
