@@ -16,4 +16,6 @@ release:
 	@git tag -f -m "Added ${VERSION} release tag" ${VERSION}
 	@git push --tags origin
 	@rm -f *.zip
-	zip -r shotcut_presets.zip Shotcut/
+	zip -r shotcut_presets_grid_2x2.zip /Shotcut/Grid_2x2
+	zip -r shotcut_presets_grid_2x3.zip /Shotcut/Grid_2x3
+	zip -r shotcut_presets_grid_3x3.zip /Shotcut/Grid_3x3
