@@ -13,6 +13,7 @@ update-shocut:
 
 
 release:
+	@git commit -a -m "release ${VERSION}"
 	@git tag -f -m "Added ${VERSION} release tag" ${VERSION}
 	@git push --tags origin
 	@rm -f *.zip
