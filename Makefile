@@ -1,4 +1,4 @@
-VERSION = 0.1
+VERSION = 0.2
 SHOTCUT_DATA=/home/tim/Documents/Shotcut
 
 update-presets:
