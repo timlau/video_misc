@@ -1,13 +1,9 @@
-# Padding
-
 import argparse
 import urllib
 from dataclasses import dataclass
 from pathlib import Path
 
 from string import Template
-
-import urllib3
 
 PRESET = """---
 rect: 0=$x_start $y_start 0 0 1;$frame_in=$x_end $y_end $width $height 1;$frame_out=$x_end $y_end $width $height 1;$frame_end=$x_start $y_start 0 0 1
@@ -17,6 +13,13 @@ color: "#00000000"
 "shotcut:animOut": "00:00:01.000"
 ..."""
 
+PRESET_BORDER = """---
+rect: 0|=0 0 0 0 1;$frame_in|=$x_end $y_end $width $height 1;$frame_out|=0 0 0 0 1
+radius: 0
+color: "#00000000"
+"shotcut:animIn": "00:00:00.000"
+"shotcut:animOut": "00:00:00.000"
+..."""
 
 @dataclass
 class Grid:
@@ -51,18 +54,22 @@ class Grid:
         if border:
             dx = self.xpad / 2
             dy = self.ypad / 2
+            extra_w = extra_h = 0
         else:
             dx = dy = 0
+            # if no border we need to add extra to width & height
+            extra_w = self.xpad / 2
+            extra_h = self.ypad / 2
         x = round(dx + (start_col * grid_width))
         y = round(dy + (start_row * grid_height))
         if last_col == self.columns:
-            width = round(num_col * grid_width - self.xpad)
+            width = round(num_col * grid_width - (2 * dx)) + extra_w
         else:
-            width = round(num_col * grid_width - (dx))
+            width = round(num_col * grid_width - (dx)) + extra_w
         if last_row == self.rows:
-            height = round(num_row * grid_height - self.ypad)
+            height = round(num_row * grid_height - (2 * dy)) + extra_h
         else:
-            height = round(num_row * grid_height - (dy))
+            height = round(num_row * grid_height - (dy)) + extra_h
         return x, y, width, height
 
 
@@ -72,8 +79,8 @@ class Preset:
     size: int
     fps: int
     duration: int
-    
-    def set_output(self, output:str, update:bool):
+
+    def set_output(self, output: str, update: bool):
         self.output = output
         self.update = update
 
@@ -91,7 +98,12 @@ class Preset:
 
     def calc_top_left(self, border: bool = True):
         x, y, w, h = self.grid.calc_block(0, 0, self.size, self.size, border=border)
-        template = Template(PRESET)
+        prefix = "SlideIn_Top_Left"
+        if not border:
+            prefix += "_Border"
+            template = Template(PRESET_BORDER)
+        else:
+            template = Template(PRESET)
         tpl = template.substitute(
             x_start=x,
             y_start=y,
@@ -103,14 +115,16 @@ class Preset:
             height=h,
             width=w,
         )
-        prefix="SlideIn_Top_Left" 
-        if not border:
-            prefix += "_Border"
-        self.write_preset(f"{prefix}_{self.grid.height}p_{self.fps}fps",tpl)
+        self.write_preset(f"{prefix}_{self.grid.height}p_{self.fps}fps", tpl)
 
     def calc_top_right(self, border: bool = True):
         x, y, w, h = self.grid.calc_block(0, 1, self.size, self.size, border=border)
-        template = Template(PRESET)
+        prefix = "SlideIn_Top_Right"
+        if not border:
+            prefix += "_Border"
+            template = Template(PRESET_BORDER)
+        else:
+            template = Template(PRESET)
         tpl = template.substitute(
             x_start=x + w,
             y_start=y,
@@ -122,14 +136,16 @@ class Preset:
             height=h,
             width=w,
         )
-        prefix="SlideIn_Top_Right" 
-        if not border:
-            prefix += "_Border"
-        self.write_preset(f"{prefix}_{self.grid.height}p_{self.fps}fps",tpl)
+        self.write_preset(f"{prefix}_{self.grid.height}p_{self.fps}fps", tpl)
 
     def calc_bottom_left(self, border: bool = True):
         x, y, w, h = self.grid.calc_block(1, 0, self.size, self.size, border=border)
-        template = Template(PRESET)
+        prefix = "SlideIn_Bottom_Left"
+        if not border:
+            prefix += "_Border"
+            template = Template(PRESET_BORDER)
+        else:
+            template = Template(PRESET)
         tpl = template.substitute(
             x_start=x,
             y_start=y + h,
@@ -141,14 +157,16 @@ class Preset:
             height=h,
             width=w,
         )
-        prefix="SlideIn_Bottom_Left" 
-        if not border:
-            prefix += "_Border"
-        self.write_preset(f"{prefix}_{self.grid.height}p_{self.fps}fps",tpl)
+        self.write_preset(f"{prefix}_{self.grid.height}p_{self.fps}fps", tpl)
 
     def calc_bottom_right(self, border: bool = True):
         x, y, w, h = self.grid.calc_block(1, 1, self.size, self.size, border=border)
-        template = Template(PRESET)
+        prefix = "SlideIn_Bottom_Right"
+        if not border:
+            prefix += "_Border"
+            template = Template(PRESET_BORDER)
+        else:
+            template = Template(PRESET)
         tpl = template.substitute(
             x_start=x + w,
             y_start=y + h,
@@ -160,11 +178,7 @@ class Preset:
             height=h,
             width=w,
         )
-        prefix="SlideIn_Bottom_Right" 
-        if not border:
-            prefix += "_Border"
-        self.write_preset(f"{prefix}_{self.grid.height}p_{self.fps}fps",tpl)
-
+        self.write_preset(f"{prefix}_{self.grid.height}p_{self.fps}fps", tpl)
 
     def write_preset(self, name: str, preset: str):
         qf_name = urllib.parse.quote_plus(name)
