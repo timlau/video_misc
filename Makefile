@@ -6,7 +6,7 @@ update-presets:
 	python ./create_grid_presets/create_grid_presets.py 2 2 -o ./Shotcut/Grid_2x2/1080/
 	python ./create_grid_presets/create_grid_presets.py 2 3 -o ./Shotcut/Grid_2x3/1080/
 	python ./create_grid_presets/create_grid_presets.py 3 3 -o ./Shotcut/Grid_3x3/1080/
-	python ./create_grid_presets/create_slidein_presets.py 3 3 --size 2 -o ./Shotcut/SlideIn/3x3_2/1080_30FPS/
+	python ./create_grid_presets/create_slidein_presets.py 3 3 --size 2 -o ./Shotcut/SlideIn/3x3_2/1080_30FPS/ --update
 
 update-shocut:
 	@rm -f $(SHOTCUT_DATA)/presets/cropRectangle/Grid*
