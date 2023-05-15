@@ -52,7 +52,10 @@ class SlideUI:
 
 class OutputUI:
     def __init__(self, parent, row) -> None:
-        self.output = GridEntryLine(parent, "Output directory", row=row, default=".")
+        default = Path(".") / Path("Shortcut")
+        self.output = GridEntryLine(
+            parent, "Output directory", row=row, default=default.resolve()
+        )
 
     def read_values(self) -> Path:
         return Path(self.output.entry.get()).resolve()

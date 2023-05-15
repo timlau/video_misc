@@ -6,10 +6,12 @@ from ui import FONT_BOLD, FONT_NORMAL
 
 
 class GridEntryLine:
-    def __init__(self, parent, text, row: int, default="") -> None:
+    def __init__(self, parent, text, row: int, default: str) -> None:
         self.label = tk.Label(parent, text=text, anchor=tk.W, font=FONT_BOLD)
         self.label.grid(row=row, column=1, columnspan=6, sticky=(tk.W, tk.E), padx=5)
-        self.entry = tk.Entry(parent, font=FONT_NORMAL, text=default)
+        value = tk.StringVar()
+        value.set(default)
+        self.entry = tk.Entry(parent, font=FONT_NORMAL, textvariable=value)
         self.entry.grid(
             row=row + 1, column=1, columnspan=6, sticky=(tk.W, tk.E), padx=5, pady=15
         )

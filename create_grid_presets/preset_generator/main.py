@@ -22,11 +22,11 @@ class Application:
         _ = Selector(self.content, GENERATORS, callback=self.on_generator_selected)
         self.sub_content = tk.Frame(self.content)
         self.sub_content.pack(fill=tk.X, padx=20, pady=20)
-        btn1 = tk.Button(self.content, text="Ok", command=self.on_OK)
+        btn1 = tk.Button(self.content, text="Build", command=self.on_build)
         btn1.pack(side=tk.BOTTOM, pady=20)
         self.app.mainloop()
 
-    def on_OK(self):
+    def on_build(self):
         if self.active:
             match self.active:
                 case "grid":
