@@ -36,6 +36,7 @@ class Application:
                 case "slidein":
                     print(self.video_mode.read_values())
                     print(self.grid_size.read_values())
+                    print(self.slide.read_values())
                     print(self.output.read_values())
 
     def on_generator_selected(self, value: str):
@@ -44,12 +45,6 @@ class Application:
         self.sub_content = tk.Frame(
             self.content, highlightbackground="black", highlightthickness=1
         )
-        self.sub_content.columnconfigure(1, weight=0)
-        self.sub_content.columnconfigure(2, weight=0)
-        self.sub_content.columnconfigure(3, weight=0)
-        self.sub_content.columnconfigure(4, weight=0)
-        self.sub_content.columnconfigure(5, weight=0)
-        self.sub_content.columnconfigure(6, weight=0)
 
         self.sub_content.pack(fill=tk.X, padx=20, pady=5)
 
@@ -62,10 +57,13 @@ class Application:
                 row += 2
                 self.output = OutputUI(self.sub_content, row)
             case "slidein":
-                self.video_mode = VideoModeUI(self.sub_content)
-                self.grid_size = GridSizeUI(self.sub_content)
-                self.slide = SlideUI(self.sub_content)
-                self.output = OutputUI(self.sub_content)
+                self.video_mode = VideoModeUI(self.sub_content, row)
+                row += 2
+                self.grid_size = GridSizeUI(self.sub_content, row)
+                row += 2
+                self.slide = SlideUI(self.sub_content, row)
+                row += 2
+                self.output = OutputUI(self.sub_content, row)
 
 
 if __name__ == "__main__":

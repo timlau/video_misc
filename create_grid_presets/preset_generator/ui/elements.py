@@ -38,13 +38,16 @@ class GridSizeUI:
 
 
 class SlideUI:
-    def __init__(self, parent) -> None:
-        frame = tk.Frame(parent, highlightbackground="black", highlightthickness=1)
-        frame.pack(fill=tk.X, padx=20, pady=5)
-        label = tk.Label(frame, text="Slide", font=FONT_BOLD)
-        label.grid(row=1, column=1, pady=5, padx=5)
-        self.size = GridEntry(frame, "Size", default="2", row=1, col=1)
-        self.duration = GridEntry(frame, "Duration", default="5", row=1, col=3)
+    def __init__(self, parent, row) -> None:
+        label = tk.Label(parent, text="Slide", font=FONT_BOLD)
+        label.grid(row=row, column=1, pady=5, padx=5)
+        self.size = GridEntry(parent, "Size", default="2", row=row + 1, col=1)
+        self.duration = GridEntry(parent, "Duration", default="5", row=row + 1, col=3)
+
+    def read_values(self):
+        size = int(self.size.entry.get())
+        duration = int(self.duration.entry.get())
+        return size, duration
 
 
 class OutputUI:
