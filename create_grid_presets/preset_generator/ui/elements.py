@@ -4,24 +4,16 @@ from tkinter import ttk
 from pathlib import Path
 
 from ui import FONT_BOLD, VideoMode, Grid
-from ui.widgets import GridEntry, PackEntry
+from ui.widgets import GridEntry, GridEntryLine
 
 
 class VideoModeUI:
-    def __init__(self, parent) -> None:
-        frame = tk.Frame(parent, highlightbackground="black", highlightthickness=1)
-        frame.pack(fill=tk.X, padx=20, pady=5)
-        frame.columnconfigure(0, weight=0)
-        frame.columnconfigure(1, weight=0)
-        frame.columnconfigure(2, weight=0)
-        frame.columnconfigure(3, weight=0)
-        frame.columnconfigure(4, weight=0)
-        frame.columnconfigure(5, weight=0)
-        label = tk.Label(frame, text="Video Mode", font=FONT_BOLD)
-        label.grid(row=0, column=0, pady=5, padx=5)
-        self.width = GridEntry(frame, "Width", default="1920", row=1, col=0)
-        self.height = GridEntry(frame, "Height", default="1080", row=1, col=2)
-        self.fps = GridEntry(frame, "FPS", default="30", row=1, col=4)
+    def __init__(self, parent, row) -> None:
+        label = tk.Label(parent, text="Video Mode", font=FONT_BOLD, anchor=tk.W)
+        label.grid(row=row, column=1, columnspan=6, pady=5, padx=5, sticky=tk.W)
+        self.width = GridEntry(parent, "Width", default="1920", row=row + 1, col=1)
+        self.height = GridEntry(parent, "Height", default="1080", row=row + 1, col=3)
+        self.fps = GridEntry(parent, "FPS", default="30", row=row + 1, col=5)
 
     def read_values(self) -> VideoMode:
         width = int(self.width.entry.get())
@@ -31,20 +23,12 @@ class VideoModeUI:
 
 
 class GridSizeUI:
-    def __init__(self, parent) -> None:
-        frame = tk.Frame(parent, highlightbackground="black", highlightthickness=1)
-        frame.pack(fill=tk.X, padx=20, pady=5)
-        frame.columnconfigure(0, weight=0)
-        frame.columnconfigure(1, weight=0)
-        frame.columnconfigure(2, weight=0)
-        frame.columnconfigure(3, weight=0)
-        frame.columnconfigure(4, weight=0)
-        frame.columnconfigure(5, weight=0)
-        label = tk.Label(frame, text="Grid_Size", font=FONT_BOLD)
-        label.grid(row=0, column=0, pady=5, padx=5)
-        self.rows = GridEntry(frame, "Rows", default="3", row=1, col=0)
-        self.columns = GridEntry(frame, "Columns", default="3", row=1, col=2)
-        self.padding = GridEntry(frame, "Padding", default="16", row=1, col=4)
+    def __init__(self, parent, row) -> None:
+        label = tk.Label(parent, text="Grid_Size", font=FONT_BOLD)
+        label.grid(row=row, column=1, columnspan=6, pady=5, padx=5, sticky=tk.W)
+        self.rows = GridEntry(parent, "Rows", default="3", row=row + 1, col=1)
+        self.columns = GridEntry(parent, "Columns", default="3", row=row + 1, col=3)
+        self.padding = GridEntry(parent, "Padding", default="16", row=row + 1, col=5)
 
     def read_values(self):
         rows = int(self.rows.entry.get())
@@ -57,23 +41,15 @@ class SlideUI:
     def __init__(self, parent) -> None:
         frame = tk.Frame(parent, highlightbackground="black", highlightthickness=1)
         frame.pack(fill=tk.X, padx=20, pady=5)
-        frame.columnconfigure(0, weight=0)
-        frame.columnconfigure(1, weight=0)
-        frame.columnconfigure(2, weight=0)
-        frame.columnconfigure(3, weight=0)
-        frame.columnconfigure(4, weight=0)
-        frame.columnconfigure(5, weight=0)
         label = tk.Label(frame, text="Slide", font=FONT_BOLD)
-        label.grid(row=0, column=0, pady=5, padx=5)
-        self.size = GridEntry(frame, "Size", default="2", row=1, col=0)
-        self.duration = GridEntry(frame, "Duration", default="5", row=1, col=2)
+        label.grid(row=1, column=1, pady=5, padx=5)
+        self.size = GridEntry(frame, "Size", default="2", row=1, col=1)
+        self.duration = GridEntry(frame, "Duration", default="5", row=1, col=3)
 
 
 class OutputUI:
-    def __init__(self, parent) -> None:
-        frame = tk.Frame(parent, highlightbackground="black", highlightthickness=1)
-        frame.pack(fill=tk.X, padx=20, pady=5)
-        self.output = PackEntry(frame, "Output directory", default=".")
+    def __init__(self, parent, row) -> None:
+        self.output = GridEntryLine(parent, "Output directory", row=row, default=".")
 
     def read_values(self) -> Path:
         return Path(self.output.entry.get()).resolve()

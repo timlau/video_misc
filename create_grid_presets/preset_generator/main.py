@@ -41,13 +41,26 @@ class Application:
     def on_generator_selected(self, value: str):
         self.active = value
         self.sub_content.destroy()
-        self.sub_content = tk.Frame(self.content)
-        self.sub_content.pack(fill=tk.X, padx=20, pady=20)
+        self.sub_content = tk.Frame(
+            self.content, highlightbackground="black", highlightthickness=1
+        )
+        self.sub_content.columnconfigure(1, weight=0)
+        self.sub_content.columnconfigure(2, weight=0)
+        self.sub_content.columnconfigure(3, weight=0)
+        self.sub_content.columnconfigure(4, weight=0)
+        self.sub_content.columnconfigure(5, weight=0)
+        self.sub_content.columnconfigure(6, weight=0)
+
+        self.sub_content.pack(fill=tk.X, padx=20, pady=5)
+
+        row = 1
         match value:
             case "grid":
-                self.video_mode = VideoModeUI(self.sub_content)
-                self.grid_size = GridSizeUI(self.sub_content)
-                self.output = OutputUI(self.sub_content)
+                self.video_mode = VideoModeUI(self.sub_content, row)
+                row += 2
+                self.grid_size = GridSizeUI(self.sub_content, row)
+                row += 2
+                self.output = OutputUI(self.sub_content, row)
             case "slidein":
                 self.video_mode = VideoModeUI(self.sub_content)
                 self.grid_size = GridSizeUI(self.sub_content)
