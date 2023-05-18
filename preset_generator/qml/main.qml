@@ -33,7 +33,7 @@ ApplicationWindow {
 
 
         Timer {
-            id: tmr
+            id: timer_message
             interval: 5000
         }
 
@@ -45,7 +45,7 @@ ApplicationWindow {
             color: "#ff0000"
             radius: 20
             property alias text: label.text
-            opacity: tmr.running ? 1.0 : 0.0
+            opacity: timer_message.running ? 1.0 : 0.0
             Behavior on opacity { PropertyAnimation { duration: 1000 } }
 
             Label {
@@ -128,8 +128,8 @@ ApplicationWindow {
 
         function onMessage(msg) {
             message.text = msg
-            tmr.stop()
-            tmr.start()
+            timer_message.stop()
+            timer_message.start()
         }
    }
 }
