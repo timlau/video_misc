@@ -31,13 +31,13 @@ if __name__ == "__main__":
     # directory where this file is located
     workdir = os.path.dirname(os.path.abspath(__file__))
 
-    # Define our backend object, which we pass to QML.
-    backend = Backend()
-
     # Qt application setup
     app = QGuiApplication(sys.argv)
     engine = QQmlApplicationEngine()
     engine.quit.connect(app.quit)
+
+    # Define our backend object, which we pass to QML.
+    backend = Backend(app)
 
     # register backend to QML engine
     engine.rootContext().setContextProperty("backend", backend)

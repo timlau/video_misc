@@ -1,33 +1,44 @@
-from dataclasses import dataclass
 from pathlib import Path
 from PyQt6.QtCore import QObject, pyqtProperty, pyqtSlot, pyqtSignal
+from PyQt6.QtWidgets import QMessageBox, QMainWindow
+from preset import PresetData, grid_from_preset_data
+from preset.slide import SlideInPreset
 
 
-@dataclass
-class UIData:
-    width: int = 1920
-    height: int = 1080
-    fps: int = 30
-    rows: int = 3
-    columns: int = 3
-    padding: int = 16
-    size: int = 2
-    duration: int = 5
-    preset: str = "grid"
-    output: Path = Path(".") / Path("Shotcut")
+class Builder:
+    def __init__(self, data: PresetData):
+        self.data = data
+        self.grid = grid_from_preset_data(data)
+
+    def build(self):
+        match self.data.preset:
+            case "grid":
+                ...
+            case "slide":
+                preset = SlideInPreset(data=self.data, grid=self.grid)
+                preset.generate()
 
 
 class Backend(QObject):
     refresh = pyqtSignal(str)
+    message = pyqtSignal(str)
 
-    def __init__(self):
+    def __init__(self, win):
         super().__init__()
-        self.data = UIData()
+        self.data = PresetData()
+        self.app = win
 
     @pyqtSlot()
     def generate(self):
         print("Generate")
         print(self.data)
+        builder = Builder(self.data)
+        builder.build()
+        self.message.emit("Presets generated")
+
+    #
+    # qml properties
+    #
 
     @pyqtProperty(str)
     def preset(self):

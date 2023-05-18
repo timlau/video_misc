@@ -2,6 +2,8 @@ import QtQuick 6.0
 import QtQuick.Window 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Controls.Material 6.0
+import QtQuick.Layouts 6.0
+
 
 ApplicationWindow {
     id: window
@@ -29,8 +31,35 @@ ApplicationWindow {
         }
         radius: 10
 
+
+        Timer {
+            id: tmr
+            interval: 5000
+        }
+
+        Rectangle {
+            id: message
+            width: 400
+            height: 50
+            anchors.centerIn: parent                
+            color: "#ff0000"
+            radius: 20
+            property alias text: label.text
+            opacity: tmr.running ? 1.0 : 0.0
+            Behavior on opacity { PropertyAnimation { duration: 1000 } }
+
+            Label {
+                id: label
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                color: "#ffffff"
+            }
+        }
+        
+
         PresetType {
             id: preset
+            anchors.top: parent.top
         }
 
         VideoMode {
@@ -69,6 +98,8 @@ ApplicationWindow {
 
 
 
+
+
     }
 
     Connections {
@@ -94,8 +125,15 @@ ApplicationWindow {
                 slide.visible = false
             }
         }
+
+        function onMessage(msg) {
+            message.text = msg
+            tmr.stop()
+            tmr.start()
+        }
    }
 }
+
 
 /*##^##
 Designer {
