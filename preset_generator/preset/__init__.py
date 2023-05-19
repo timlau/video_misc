@@ -1,20 +1,36 @@
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
+
+
+@dataclass
+class VideoMode:
+    width: int
+    height: int
+    fps: int
+
+
+@dataclass
+class Grid:
+    columns: int
+    rows: int
+    padding: int
+
+
+@dataclass
+class SlideIn:
+    size: int = 2
+    duration: int = 7
 
 
 @dataclass
 class PresetData:
     # video mode
-    width: int = 1920
-    height: int = 1080
-    fps: int = 30
+    video_mode: VideoMode
     # grid
-    rows: int = 3
-    columns: int = 3
-    padding: int = 16
+    grid: Grid
     # slide in
-    size: int = 2
-    duration: int = 7
+    slide_in: SlideIn
     # generel
     preset: str = "grid"
     output: Path = Path.home() / Path("Documents") / Path("Shotcut")
@@ -22,64 +38,61 @@ class PresetData:
 
 
 @dataclass
-class Grid:
-    width: int
-    height: int
-    columns: int
-    rows: int
-    update: bool
-    xpad: int
-    ypad: int
+class GridCalc:
+    video_mode: VideoMode
+    grid: Grid
 
-    @property
+    @cached_property
     def grid_width(self):
-        return round(self.width / self.columns)
+        return round(self.video_mode.width / self.grid.columns)
 
-    @property
+    @cached_property
     def grid_height(self):
-        return round(self.height / self.rows)
-
-    @property
-    def block_size(self):
-        return self.grid_width, self.grid_height
-
-    def set_padding(self, x, y):
-        self.xpad = x
-        self.ypad = y
+        return round(self.video_mode.height / self.grid.rows)
 
     def calc_block(self, start_row, start_col, num_row, num_col, border: bool = True):
-        grid_width, grid_height = self.block_size
         last_col = start_col + num_col
         last_row = start_row + num_row
         if border:
-            dx = self.xpad / 2
-            dy = self.ypad / 2
-            extra_w = extra_h = 0
+            dt = self.grid.padding / 2
+            extra = 0
         else:
-            dx = dy = 0
+            dt = 0
             # if no border we need to add extra to width & height
-            extra_w = self.xpad / 2
-            extra_h = self.ypad / 2
-        x = round(dx + (start_col * grid_width))
-        y = round(dy + (start_row * grid_height))
-        if last_col == self.columns:
-            width = round(num_col * grid_width - (2 * dx)) + extra_w
+            extra = self.grid.padding / 2
+        x = round(dt + (start_col * self.grid_width))
+        y = round(dt + (start_row * self.grid_height))
+        if last_col == self.grid.columns:
+            width = round(num_col * self.grid_width - (2 * dt)) + extra
         else:
-            width = round(num_col * grid_width - (dx)) + extra_w
-        if last_row == self.rows:
-            height = round(num_row * grid_height - (2 * dy)) + extra_h
+            width = round(num_col * self.grid_width - (dt)) + extra
+        if last_row == self.grid.rows:
+            height = round(num_row * self.grid_height - (2 * dt)) + extra
         else:
-            height = round(num_row * grid_height - (dy)) + extra_h
+            height = round(num_row * self.grid_height - (dt)) + extra
         return x, y, width, height
 
 
-def grid_from_preset_data(data: PresetData):
-    return Grid(
-        width=data.width,
-        height=data.height,
-        columns=data.columns,
-        rows=data.rows,
-        update=data.update,
-        xpad=data.padding,
-        ypad=data.padding,
+def grid_from_preset(data: PresetData) -> GridCalc:
+    return GridCalc(
+        video_mode=data.video_mode,
+        grid=data.grid,
     )
+
+
+def create_default_preset_data() -> PresetData:
+    video_mode = VideoMode(
+        width=1920,
+        height=1080,
+        fps=30,
+    )
+    grid = Grid(
+        rows=3,
+        columns=3,
+        padding=16,
+    )
+    slide_in = SlideIn(
+        size=2,
+        duration=7,
+    )
+    return PresetData(video_mode=video_mode, grid=grid, slide_in=slide_in)

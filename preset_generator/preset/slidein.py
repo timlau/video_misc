@@ -1,12 +1,10 @@
-import argparse
-from turtle import update, width
 import urllib
 from dataclasses import dataclass
 from pathlib import Path
 
 from string import Template
 
-from preset import PresetData, Grid
+from preset import GridCalc, PresetData
 
 PRESET = """---
 rect: 0=$x_start $y_start 0 0 1;$frame_in=$x_end $y_end $width $height 1;$frame_out=$x_end $y_end $width $height 1;$frame_end=$x_start $y_start 0 0 1
@@ -14,7 +12,7 @@ radius: 0=0;$frame_in=0;$frame_out=0;$frame_end=0
 color: "#00000000"
 "shotcut:animIn": "00:00:01.000"
 "shotcut:animOut": "00:00:01.000"
-..."""
+..."""  # noqa
 
 PRESET_BORDER = """---
 rect: 0|=0 0 0 0 1;$frame_in|=$x_end $y_end $width $height 1;$frame_out|=0 0 0 0 1
@@ -28,27 +26,39 @@ color: "#00000000"
 @dataclass
 class SlideInPreset:
     data: PresetData
-    grid: Grid
+    grid_calc: GridCalc
+
+    @property
+    def video_mode(self):
+        return self.data.video_mode
+
+    @property
+    def slide_in(self):
+        return self.data.slide_in
 
     @property
     def frame_end(self):
-        return (self.data.duration * self.data.fps) - 1
+        return (self.slide_in.duration * self.video_mode.fps) - 1
 
     @property
     def frame_in(self):
-        return self.data.fps - 1
+        return self.video_mode.fps - 1
 
     @property
     def frame_out(self):
-        return self.frame_end - self.data.fps + 1
+        return self.frame_end - self.video_mode.fps + 1
+
+    @property
+    def filename(self):
+        return f"{self.video_mode.height}p_{self.video_mode.fps}fps_{self.slide_in.duration}s_{self.slide_in.size}x{self.slide_in.size}"  # noqa
 
     def calc_top_left(self, border: bool = True):
-        x, y, w, h = self.grid.calc_block(
-            0, 0, self.data.size, self.data.size, border=border
+        x, y, w, h = self.grid_calc.calc_block(
+            0, 0, self.slide_in.size, self.slide_in.size, border=border
         )
-        prefix = "SlideIn_Top_Left"
+        prefix = "SlideIn_TL"
         if not border:
-            prefix += "_Border"
+            prefix += "_B"
             template = Template(PRESET_BORDER)
         else:
             template = Template(PRESET)
@@ -63,18 +73,15 @@ class SlideInPreset:
             height=h,
             width=w,
         )
-        self.write_preset(
-            f"{prefix}_{self.data.height}p_{self.data.fps}fps_{self.data.duration}s_{self.data.duration}s",
-            tpl,
-        )
+        self.write_preset(f"{prefix}_{self.filename}", tpl)
 
     def calc_top_right(self, border: bool = True):
-        x, y, w, h = self.grid.calc_block(
-            0, 1, self.data.size, self.data.size, border=border
+        x, y, w, h = self.grid_calc.calc_block(
+            0, 1, self.slide_in.size, self.slide_in.size, border=border
         )
-        prefix = "SlideIn_Top_Right"
+        prefix = "SlideIn_TR"
         if not border:
-            prefix += "_Border"
+            prefix += "_B"
             template = Template(PRESET_BORDER)
         else:
             template = Template(PRESET)
@@ -89,18 +96,15 @@ class SlideInPreset:
             height=h,
             width=w,
         )
-        self.write_preset(
-            f"{prefix}_{self.data.height}p_{self.data.fps}fps_{self.data.duration}s",
-            tpl,
-        )
+        self.write_preset(f"{prefix}_{self.filename}", tpl)
 
     def calc_bottom_left(self, border: bool = True):
-        x, y, w, h = self.grid.calc_block(
-            1, 0, self.data.size, self.data.size, border=border
+        x, y, w, h = self.grid_calc.calc_block(
+            1, 0, self.slide_in.size, self.slide_in.size, border=border
         )
-        prefix = "SlideIn_Bottom_Left"
+        prefix = "SlideIn_BL"
         if not border:
-            prefix += "_Border"
+            prefix += "_B"
             template = Template(PRESET_BORDER)
         else:
             template = Template(PRESET)
@@ -115,18 +119,15 @@ class SlideInPreset:
             height=h,
             width=w,
         )
-        self.write_preset(
-            f"{prefix}_{self.data.height}p_{self.data.fps}fps_{self.data.duration}s",
-            tpl,
-        )
+        self.write_preset(f"{prefix}_{self.filename}", tpl)
 
     def calc_bottom_right(self, border: bool = True):
-        x, y, w, h = self.grid.calc_block(
-            1, 1, self.data.size, self.data.size, border=border
+        x, y, w, h = self.grid_calc.calc_block(
+            1, 1, self.slide_in.size, self.slide_in.size, border=border
         )
-        prefix = "SlideIn_Bottom_Right"
+        prefix = "SlideIn_BR"
         if not border:
-            prefix += "_Border"
+            prefix += "_B"
             template = Template(PRESET_BORDER)
         else:
             template = Template(PRESET)
@@ -141,10 +142,7 @@ class SlideInPreset:
             height=h,
             width=w,
         )
-        self.write_preset(
-            f"{prefix}_{self.data.height}p_{self.data.fps}fps_{self.data.duration}s",
-            tpl,
-        )
+        self.write_preset(f"{prefix}_{self.filename}", tpl)
 
     def write_preset(self, name: str, preset: str):
         qf_name = urllib.parse.quote_plus(name)
