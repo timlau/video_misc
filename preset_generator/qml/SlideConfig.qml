@@ -1,6 +1,7 @@
-import QtQuick 6.0
-import QtQuick.Window 6.0
-import QtQuick.Controls 6.0
+import QtQuick
+import QtQuick.Controls.Fusion
+import QtQuick.Layouts
+
 
 
 Row {

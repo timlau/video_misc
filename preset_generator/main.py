@@ -2,8 +2,6 @@
 
 import os
 import sys
-from turtle import width
-from typing import Protocol
 
 from PyQt6.QtGui import QGuiApplication
 from PyQt6.QtQml import QQmlApplicationEngine

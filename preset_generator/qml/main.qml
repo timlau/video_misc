@@ -1,7 +1,5 @@
 import QtQuick 6.0
-import QtQuick.Window 6.0
-import QtQuick.Controls 6.0
-import QtQuick.Controls.Material 6.0
+import QtQuick.Controls.Fusion
 import QtQuick.Layouts 6.0
 
 
@@ -14,8 +12,6 @@ ApplicationWindow {
 
     flags: Qt.WindowCloseButtonHint | Qt.WindowMinimizeButtonHint | Qt.CustomizeWindowHint | Qt.Dialog | Qt.WindowTitleHint
 
-    Material.theme: Material.Dark
-    Material.accent: Material.Purple
 
     Rectangle {
         id: content
