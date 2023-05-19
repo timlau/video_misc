@@ -1,6 +1,5 @@
 from pathlib import Path
 from PyQt6.QtCore import QObject, pyqtProperty, pyqtSlot, pyqtSignal
-from PyQt6.QtWidgets import QMessageBox, QMainWindow
 from preset import PresetData, grid_from_preset_data
 from preset.slidein import SlideInPreset
 from preset.grid import GridPreset
