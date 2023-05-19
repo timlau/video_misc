@@ -4,17 +4,21 @@ from pathlib import Path
 
 @dataclass
 class PresetData:
+    # video mode
     width: int = 1920
     height: int = 1080
     fps: int = 30
+    # grid
     rows: int = 3
     columns: int = 3
     padding: int = 16
+    # slide in
     size: int = 2
-    duration: int = 5
+    duration: int = 7
+    # generel
     preset: str = "grid"
-    output: Path = Path(".") / Path("tmp/shotcut")
-    update: bool = False
+    output: Path = Path.home() / Path("Documents") / Path("Shotcut")
+    update: bool = True
 
 
 @dataclass

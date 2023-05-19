@@ -2,7 +2,8 @@ from pathlib import Path
 from PyQt6.QtCore import QObject, pyqtProperty, pyqtSlot, pyqtSignal
 from PyQt6.QtWidgets import QMessageBox, QMainWindow
 from preset import PresetData, grid_from_preset_data
-from preset.slide import SlideInPreset
+from preset.slidein import SlideInPreset
+from preset.grid import GridPreset
 
 
 class Builder:
@@ -13,7 +14,8 @@ class Builder:
     def build(self):
         match self.data.preset:
             case "grid":
-                ...
+                preset = GridPreset(data=self.data, grid=self.grid)
+                preset.generate()
             case "slide":
                 preset = SlideInPreset(data=self.data, grid=self.grid)
                 preset.generate()
