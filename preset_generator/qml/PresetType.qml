@@ -15,7 +15,8 @@ Item {
 
     ComboBox {
         id: preset_combo
-        width: 400
+        implicitWidth: 400
+        implicitHeight: 35
         anchors.horizontalCenter: preset_type.horizontalCenter
         textRole: "key"
         valueRole: "value"

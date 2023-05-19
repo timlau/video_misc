@@ -15,7 +15,6 @@ ApplicationWindow {
 
     Rectangle {
         id: content
-        height: 40
         color: "#000000"
 
         anchors {
@@ -35,8 +34,8 @@ ApplicationWindow {
 
         Rectangle {
             id: message
-            width: 400
-            height: 50
+            implicitWidth: 400
+            implicitHeight: 50
             anchors.centerIn: parent                
             color: "#ff0000"
             radius: 20
